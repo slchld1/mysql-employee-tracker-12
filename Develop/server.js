@@ -9,7 +9,8 @@ const figlet = require('figlet');
 
 require('console.table')
 
-connection.connect().then(() => {
+connection.connect((err) => {
+    if(err) throw err;
     console.log(chalk.bgBlack.bold(`=================================================================================================`))
     console.log(chalk.blue.bold('Connection has been established successfully.'));
     console.log(chalk.blue.bold(figlet.textSync('EMPLOYEE MANAGER')));
@@ -17,9 +18,6 @@ connection.connect().then(() => {
     console.log(chalk.blue.bold(`Welcome, ${process.env.DB_USER}!`))
     //console.log("\r\n\u2591\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2588\u2588\u2588\u2557\u2591\u2591\u2588\u2588\u2557\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2588\u2588\u2557\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2591\u2591\u2588\u2588\u2557\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2591\r\n\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2557\u2591\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255D\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255D\u2591\u2591\u2591\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255D\u2591\r\n\u2588\u2588\u2551\u2591\u2591\u255A\u2550\u255D\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2554\u2588\u2588\u2557\u2588\u2588\u2551\u255A\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2557\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2557\u2591\r\n\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2557\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2551\u255A\u2588\u2588\u2588\u2588\u2551\u2591\u255A\u2550\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2554\u2550\u2550\u255D\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2551\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2551\u2591\u2591\u2588\u2588\u2551\u2588\u2588\u2551\u2591\u2591\u255A\u2588\u2588\u2557\r\n\u255A\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u255A\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2551\u2591\u255A\u2588\u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u255A\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u255A\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u255A\u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255D\r\n\u2591\u255A\u2550\u2550\u2550\u2550\u255D\u2591\u2591\u255A\u2550\u2550\u2550\u2550\u255D\u2591\u255A\u2550\u255D\u2591\u2591\u255A\u2550\u2550\u255D\u255A\u2550\u2550\u2550\u2550\u2550\u255D\u2591\u2591\u255A\u2550\u2550\u2550\u2550\u255D\u2591\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u255A\u2550\u255D\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u2591\u255A\u2550\u2550\u2550\u2550\u255D\u2591\u2591\u255A\u2550\u2550\u2550\u2550\u2550\u255D\u2591")
     showPrompt();
-
-}).catch((error) => {
-    console.error('Unable to connect to the database: ', error);
 });
 
 function showPrompt() {
@@ -70,7 +68,7 @@ function showPrompt() {
                 
                 case "Quit": 
                     console.log("BYE!")
-                    sequelize.close()
+                    connection.end()
                     break;
                 
             }
@@ -78,9 +76,57 @@ function showPrompt() {
 }
 
 // ------- functions --------
+// Go back function
+function goBack() {
+    inquirer
+        .prompt({
 
-async function viewDepartments() {
-    // const department = await Department.findAll();
-    // console.log(department.every(department =>  department instanceof Department))
-    // console.log("All Departments: ", JSON.stringify(department, null, 2));
+            type: "list",
+            name: "go-back",
+            message: "Selection Screen",
+            choices: [
+                "Go back to menu"
+            ]
+    }).then((choices) => {
+            showPrompt();
+    })
 }
+// View All Departments function
+function viewDepartments() {
+    connection.query(`SELECT * FROM department`, (err, response) => {
+        if (err) throw err;
+        console.log(chalk.yellow.bold('=================================================='))
+        console.table(response);
+        console.log(chalk.yellow.bold('=================================================='))
+        goBack();
+    })
+}
+
+// View All Roles function
+function viewRoles() {
+    connection.query(`SELECT * FROM role`, (err, response) => {
+        if (err) throw err;
+        console.log(chalk.yellow.bold('=================================================='))
+        console.table(response);
+        console.log(chalk.yellow.bold('=================================================='))
+        goBack();
+    })
+}
+
+// View All Employees function
+function viewEmpoyees() {
+    connection.query(connection.query(`SELECT
+    CONCAT(e.last_name, ', ', e.first_name) AS 'Employee Name',
+    CONCAT(m.last_name, ', ', m.first_name) AS Manager
+FROM
+employee e
+INNER JOIN employee m ON 
+    m.role_id = e.manager_id`, (err, response) => {
+        if (err) throw err;
+        console.log(chalk.yellow.bold('=================================================='))
+        console.table(response);
+        console.log(chalk.yellow.bold('=================================================='))
+    }),
+    goBack()
+)}
+

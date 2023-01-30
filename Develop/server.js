@@ -109,7 +109,7 @@ function viewDepartments() {
 function viewRoles() {
     connection.query(`SELECT role.id,
         role.title,
-        role.salary.
+        role.salary,
         department.name as department
         FROM role
         INNER JOIN department ON
@@ -201,7 +201,7 @@ function addRolesToDepartment() {
             connection.query(`SELECT id FROM department WHERE name = '${output.department}';`, (err, response) => {
                 if(err) throw err;
                 connection.query(`UPDATE role SET department_id = ${response[0].id} WHERE id = (SELECT LAST_INSERT_ID());`);
-                console.log('Success')
+                console.log('Role has been successfully added!')
                 goBack();
             })
         });
@@ -209,7 +209,83 @@ function addRolesToDepartment() {
 }
 // Add Employee 
 
+function addEmployee() {
+    connection.query(`SELECT role.title FROM role`, (err, response) => {
+        if (err) throw err;
+        let roleArray = [];
+        response.forEach((role) => {roleArray.push(role.title)})
+        inquirer
+        .prompt([{
+            type: "input",
+            name: "first_name",
+            message: "Please enter the first name of the new Employee:"
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "Please enter the last name of the new Employee:"
+        },
+        {
+            type: "list",
+            name: "empRole",
+            message: "What is the role of this new Employee?",
+            choices: roleArray
+        }
+    ])
+    .then((output) => {
+        connection.query(`INSERT INTO employee (first_name, last_name)
+        VALUE ('${output.first_name}', '${output.last_name}');`)
+        connection.query(`SELECT id FROM role WHERE title = '${output.empRole}'`, (err, response) => {
+            if(err) throw err;
+            connection.query(`UPDATE employee SET role_id = ${response[0].id} WHERE id = (SELECT LAST_INSERT_ID());`, (err, response) => {
+                if(err) throw err;
+                console.log(`Employee ` + chalk.yellowBright.bold(`${output.empRole}`)` has successfully been added!`)
+                goBack();
+            })
+        })
+    })
+})
+}
 
-
-
+// Update employee function
+function updateER() { 
+    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title,
+    role.salary,
+    CONCAT (manager.first_name, " ", manager.last_name)
+    AS manager FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id`, (err, response) => {
+        if (err) throw err;
+        console.log(response)
+        // Use .map to create new value as employee name
+        let employee_Name = response.map(({ id, first_name, last_name}) => ({value: id, name: `${first_name} ${last_name}`}))
+        let role_Name = response.map(({id, title}) => ({id: id, value: `${title}` }))
+        console.log(role_Name)
+        inquirer
+        .prompt([{
+            type: "list",
+            name: "employee_select",
+            message: "What employee do you want to update?",
+            choices:  employee_Name,
+        },
+        {
+            type: "list",
+            name: "employee_role",
+            message: "Which role did you want to assign this employee?",
+            choices: role_Name
+        }])
+        .then((output) => {
+            console.log(output.employee_role)
+            connection.query(`SELECT id FROM role WHERE title = '${output.employee_role}'`,(err, response) => {
+                if (err) throw err
+                console.log(response)
+                connection.query(`UPDATE employee SET role_id = '${response[0].id}' WHERE employee.id = '${output.employee_select}';`, (err, response) => {
+                    if (err) throw err 
+                    console.log(`Employee ` + chalk.yellowBright.bold(`${output.employee_select}`) + ` has been succesfully updated!`)
+                    goBack();
+                })
+            })
+        })
+    })
+}
 

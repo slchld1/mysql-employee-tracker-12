@@ -1,14 +1,14 @@
+// require
 const mysql = require('mysql2');
 const inquirer = require('inquirer')
 const connection = require('./config/connection');
 const chalk = require('chalk')
 const figlet = require('figlet');
 
-
-
-
+// console.table for logging data
 require('console.table')
 
+// Make connection to database
 connection.connect((err) => {
     if(err) throw err;
     console.log(chalk.bgBlack.bold(`=================================================================================================`))
@@ -20,6 +20,7 @@ connection.connect((err) => {
     showPrompt();
 });
 
+// Starting Prompt (selection menu)
 function showPrompt() {
     inquirer
         .prompt({
@@ -76,7 +77,7 @@ function showPrompt() {
 }
 
 // ------- functions --------
-// Go back function
+// Go back function (Back to selection menu) (To prevent going back to selection screen instantly)
 function goBack() {
     inquirer
         .prompt({
@@ -87,13 +88,15 @@ function goBack() {
             choices: [
                 "Go back to menu"
             ]
-    }).then((choices) => {
-            showPrompt();
+    }).then((choice) => {
+            showPrompt()
     })
 }
 // View All Departments function
 function viewDepartments() {
-    connection.query(`SELECT * FROM department`, (err, response) => {
+    connection.query(`SELECT department.id AS id,
+        department.name AS department
+        FROM department`, (err, response) => {
         if (err) throw err;
         console.log(chalk.yellow.bold('=================================================='))
         console.table(response);
@@ -104,7 +107,13 @@ function viewDepartments() {
 
 // View All Roles function
 function viewRoles() {
-    connection.query(`SELECT * FROM role`, (err, response) => {
+    connection.query(`SELECT role.id,
+        role.title,
+        role.salary.
+        department.name as department
+        FROM role
+        INNER JOIN department ON
+        role.department_id = department.id`, (err, response) => {
         if (err) throw err;
         console.log(chalk.yellow.bold('=================================================='))
         console.table(response);
@@ -115,18 +124,92 @@ function viewRoles() {
 
 // View All Employees function
 function viewEmpoyees() {
-    connection.query(connection.query(`SELECT
-    CONCAT(e.last_name, ', ', e.first_name) AS 'Employee Name',
-    CONCAT(m.last_name, ', ', m.first_name) AS Manager
-FROM
-employee e
-INNER JOIN employee m ON 
-    m.role_id = e.manager_id`, (err, response) => {
+    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title,
+                department.name AS department, role.salary,
+                CONCAT (manager.first_name, " ", manager.last_name)
+                AS manager FROM employee
+                LEFT JOIN role ON employee.role_id = role.id
+                LEFT JOIN department ON role.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id`, (err, response) => {
         if (err) throw err;
-        console.log(chalk.yellow.bold('=================================================='))
+        console.log(chalk.yellow.bold('============================================================================'))
         console.table(response);
-        console.log(chalk.yellow.bold('=================================================='))
-    }),
-    goBack()
-)}
+        console.log(chalk.yellow.bold('============================================================================'))
+        goBack();
+    });
+}
+
+// ADD functions to create new departments, employees, or roles
+
+// Add new department
+function addDepartment(){
+    inquirer
+        .prompt({
+            type: "input",
+            name: "department_name",
+            message: "Please enter the name of the new Department:"
+        })
+        .then((output) => {
+            connection.query(`INSERT INTO department (name)
+                            VALUES('${output.department_name}');`, (err, response) => {
+            if (err) throw err;
+            console.log(`New Department: ` + chalk.yellowBright.bold(`${output.department_name}`) + ` has been added!`)
+            goBack();
+            })
+        })
+}
+
+// Add new roles
+async function addRoles() {
+    inquirer
+        .prompt([{
+        type: "input",
+        name: "role_title",
+        message: "Please enter the name of the new Role:"
+    },
+    {
+        type: "input",
+        name: "salary",
+        message: "What is the salary of the new role?"
+    }])
+    .then((output) => {
+        addRolesToDepartment();
+        // New role is created
+        connection.query(`INSERT INTO role (title, salary) 
+        VALUES ('${output.role_title}', '${output.salary}');`
+        , (err, response) => {
+            if (err) throw err;
+        })
+    })
+}
+// Make department name list..then convert name to id and update latest inserted
+function addRolesToDepartment() {
+    connection.query(`SELECT department.name FROM department`, (err, response) => {
+        if (err) throw err;
+        let departmentName = [];
+        response.forEach((department) => {departmentName.push(department.name)})
+        inquirer
+        .prompt(
+        {
+            type: "list",
+            name: "department",
+            message: "What department does this role belong to?",
+            choices: departmentName
+        })
+        .then((output) => {
+            // DepartmentName => department_id
+            connection.query(`SELECT id FROM department WHERE name = '${output.department}';`, (err, response) => {
+                if(err) throw err;
+                connection.query(`UPDATE role SET department_id = ${response[0].id} WHERE id = (SELECT LAST_INSERT_ID());`);
+                console.log('Success')
+                goBack();
+            })
+        });
+    })
+}
+// Add Employee 
+
+
+
+
 

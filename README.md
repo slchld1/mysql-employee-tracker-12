@@ -1,4 +1,4 @@
-<h1 align="center">README.md Generator Using Node.js 📠</h1>
+<h1 align="center">Mysql Employee Tracker 💼</h1>
 <p>
     <img src="https://img.shields.io/github/repo-size/slchld1/mysql-employee-tracker-12" />
     <img src="https://img.shields.io/github/languages/top/slchld1/mysql-employee-tracker-12"  />
@@ -61,17 +61,17 @@ Once those two steps are complete, type `npm start` in the command line to run n
 which will launch the application selection screen into the terminal.
 
 ## Usage 💡
-[Selection Menu Screenshot](screenshot_selectionMenu.jpg)
+![Selection Menu Screenshot](screenshot_selectionMenu.jpg)
 
 Once application is launched, you will be directed to the selection screen. The selection screen contains 7 different functions.
 
-[View All Employees](viewAllEmployees.jpg)
+![View All Employees](viewAllEmployees.jpg)
 
 Above screenshot is an example of the `view all employees` option.
 
 Adding or updating options will prompt you questions necessary in order to add or update data.
 
-Here is a video example of running the application: <a target=_blank>https://streamable.com/0qzchc</a>
+Here is a video example of running the application: <a target=_blank>![video](https://streamable.com/0qzchc)https://streamable.com/0qzchc</a>
 ## License
 MIT License
 

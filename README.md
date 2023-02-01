@@ -71,7 +71,7 @@ Above screenshot is an example of the `view all employees` option.
 
 Adding or updating options will prompt you questions necessary in order to add or update data.
 
-Here is a video example of running the application: <a target=_blank>![video](https://streamable.com/0qzchc)https://streamable.com/0qzchc</a>
+Here is a video example of running the application: <a href=https://streamable.com/0qzchc target=_blank>https://streamable.com/0qzchc</a>
 ## License
 MIT License
 

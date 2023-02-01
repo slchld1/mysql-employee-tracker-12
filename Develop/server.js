@@ -239,7 +239,7 @@ function addEmployee() {
             if(err) throw err;
             connection.query(`UPDATE employee SET role_id = ${response[0].id} WHERE id = (SELECT LAST_INSERT_ID());`, (err, response) => {
                 if(err) throw err;
-                console.log(`Employee ` + chalk.yellowBright.bold(`${output.empRole}`)` has successfully been added!`)
+                console.log(`Employee ${output.first_name} ${output.last_name} has successfully been added!`)
                 goBack();
             })
         })
@@ -256,11 +256,9 @@ function updateER() {
     LEFT JOIN role ON employee.role_id = role.id
     LEFT JOIN employee manager ON employee.manager_id = manager.id`, (err, response) => {
         if (err) throw err;
-        console.log(response)
         // Use .map to create new value as employee name
         let employee_Name = response.map(({ id, first_name, last_name}) => ({value: id, name: `${first_name} ${last_name}`}))
         let role_Name = response.map(({id, title}) => ({id: id, value: `${title}` }))
-        console.log(role_Name)
         inquirer
         .prompt([{
             type: "list",
@@ -278,10 +276,9 @@ function updateER() {
             console.log(output.employee_role)
             connection.query(`SELECT id FROM role WHERE title = '${output.employee_role}'`,(err, response) => {
                 if (err) throw err
-                console.log(response)
                 connection.query(`UPDATE employee SET role_id = '${response[0].id}' WHERE employee.id = '${output.employee_select}';`, (err, response) => {
                     if (err) throw err 
-                    console.log(`Employee ` + chalk.yellowBright.bold(`${output.employee_select}`) + ` has been succesfully updated!`)
+                    console.log(`Employee ${output.employee_select} has been succesfully updated!`)
                     goBack();
                 })
             })
